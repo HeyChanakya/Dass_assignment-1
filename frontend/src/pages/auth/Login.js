@@ -1,16 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../services/services';
 import './Auth.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement login logic
-    console.log('Login submitted', { email, password });
+    setError('');
+    setLoading(true);
+
+    try {
+      const data = await authService.login({ email, password });
+      
+      // Store token and user info
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userRole', data.role);
+      localStorage.setItem('user', JSON.stringify(data));
+
+      // Redirect based on role
+      if (data.role === 'participant') {
+        navigate('/participant/dashboard');
+      } else if (data.role === 'organizer') {
+        navigate('/organizer/dashboard');
+      } else if (data.role === 'admin') {
+        navigate('/admin/dashboard');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -20,6 +45,7 @@ const Login = () => {
           <h1>Felicity Event Management</h1>
           <h2>Login to Your Account</h2>
         </div>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label>Email Address</label>
@@ -29,6 +55,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
           <div className="form-group">
@@ -39,9 +66,12 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
-          <button type="submit" className="auth-button">Login</button>
+          <button type="submit" className="auth-button" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
         <div className="auth-footer">
           <p>
