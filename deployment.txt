@@ -1,0 +1,46 @@
+# Deployment URLs
+
+## Frontend
+URL: [To be added after deployment]
+Platform: Vercel/Netlify
+
+## Backend
+Base API URL: [To be added after deployment]
+Platform: Render/Railway/Fly/Heroku
+
+## Database
+MongoDB Atlas Connection String: [Configured via environment variables]
+
+---
+
+## Deployment Instructions
+
+### Frontend Deployment (Vercel)
+1. Push code to GitHub repository
+2. Connect repository to Vercel
+3. Configure environment variables:
+   - REACT_APP_API_URL=[Backend URL]
+4. Deploy
+
+### Backend Deployment (Render)
+1. Push code to GitHub repository
+2. Connect repository to Render
+3. Configure environment variables:
+   - PORT
+   - MONGODB_URI
+   - JWT_SECRET
+   - JWT_EXPIRE
+   - EMAIL_HOST
+   - EMAIL_PORT
+   - EMAIL_USER
+   - EMAIL_PASSWORD
+   - FRONTEND_URL
+   - ADMIN_EMAIL
+   - ADMIN_PASSWORD
+4. Deploy
+
+### Database Setup (MongoDB Atlas)
+1. Create MongoDB Atlas cluster
+2. Configure network access (allow all IPs: 0.0.0.0/0 for deployment)
+3. Create database user
+4. Get connection string and add to backend environment variables
