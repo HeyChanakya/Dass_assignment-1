@@ -38,13 +38,20 @@ const seedAdmin = async () => {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@felicity.com';
     const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
     
+    console.log('Attempting to seed admin with email:', adminEmail);
+    
     const existingAdmin = await Admin.findOne({ email: adminEmail });
     if (!existingAdmin) {
-      await Admin.create({ email: adminEmail, password: adminPassword });
-      console.log('Admin account created:', adminEmail);
+      const newAdmin = await Admin.create({ email: adminEmail, password: adminPassword });
+      console.log('✓ Admin account created successfully:', adminEmail);
+      console.log('✓ Admin ID:', newAdmin._id);
+    } else {
+      console.log('✓ Admin account already exists:', adminEmail);
+      console.log('✓ Admin ID:', existingAdmin._id);
     }
   } catch (error) {
-    console.error('Error seeding admin:', error);
+    console.error('✗ Error seeding admin:', error.message);
+    console.error('Full error:', error);
   }
 };
 

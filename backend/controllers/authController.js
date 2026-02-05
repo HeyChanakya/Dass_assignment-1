@@ -71,6 +71,8 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    console.log('Login attempt for email:', email);
+
     if (!email || !password) {
       return res.status(400).json({ message: 'Please provide email and password' });
     }
@@ -83,6 +85,7 @@ const login = async (req, res) => {
     user = await Admin.findOne({ email });
     if (user) {
       role = 'admin';
+      console.log('Found admin user:', email);
     }
 
     // Check Organizer
@@ -103,14 +106,19 @@ const login = async (req, res) => {
 
     // If user not found
     if (!user) {
+      console.log('✗ User not found for email:', email);
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     // Check password
+    console.log('Checking password for user:', email, 'role:', role);
     const isPasswordMatch = await user.matchPassword(password);
     if (!isPasswordMatch) {
+      console.log('✗ Password mismatch for user:', email);
       return res.status(401).json({ message: 'Invalid email or password' });
     }
+    
+    console.log('✓ Login successful for:', email, 'as', role);
 
     // Return user data with token
     res.json({

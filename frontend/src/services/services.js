@@ -104,6 +104,11 @@ export const registrationService = {
     return response.data;
   },
 
+  getEventParticipants: async (eventId) => {
+    const response = await api.get(`/registrations/event/${eventId}`);
+    return response.data;
+  },
+
   cancelRegistration: async (registrationId) => {
     const response = await api.delete(`/registrations/${registrationId}`);
     return response.data;
