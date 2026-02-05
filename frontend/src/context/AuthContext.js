@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { authService } from '../services/services';
 
 export const AuthContext = createContext();
 
@@ -10,27 +11,47 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is logged in on mount
     const token = localStorage.getItem('token');
-    if (token) {
-      // TODO: Verify token and get user info
-      setLoading(false);
-    } else {
-      setLoading(false);
+    const userData = localStorage.getItem('user');
+    
+    if (token && userData) {
+      try {
+        setUser(JSON.parse(userData));
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.clear();
+      }
     }
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
-    // TODO: Implement login logic
-    console.log('Login function - to be implemented');
+    try {
+      const response = await authService.login({ email, password });
+      const { token, user: userData } = response;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+      
+      return userData;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const register = async (userData) => {
-    // TODO: Implement register logic
-    console.log('Register function - to be implemented');
+    try {
+      const response = await authService.register(userData);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
+    localStorage.removeItem('user');
     setUser(null);
   };
 
